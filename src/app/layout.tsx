@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+//Components
+import SelectLang from "@/components/SelectLang";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,7 +28,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        <main className="min-h-screen bg-gradient-to-r from-[#6eda78] to-[#ffa200]">
+          <SelectLang />
+          {children}
+        </main>
       </body>
     </html>
   );
