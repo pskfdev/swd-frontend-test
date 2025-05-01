@@ -57,10 +57,10 @@ function DataTable({}: Props) {
     onChange: (newSelectedKeys: React.Key[]) =>
       setSelectedRowKeys(newSelectedKeys),
   };
-  
+
   return (
     <div>
-      <div className="flex items-center mb-4 space-x-4">
+      <div className="flex items-center my-10 space-x-4">
         <Checkbox
           checked={selectedRowKeys.length === users.length && users.length > 0}
           indeterminate={
