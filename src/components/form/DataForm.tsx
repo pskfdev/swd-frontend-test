@@ -1,12 +1,13 @@
 "use client";
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useEffect, useState } from "react";
 //Components
 import { Button, DatePicker, Form, Input, Radio, Select } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 //Store
-import { useDispatch } from "react-redux";
-import { addUser } from "@/store/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser, editUser } from "@/store/userSlice";
+import { RootState } from "@/store/store";
+//Type
+import { UserData } from "@/types/types";
 
 const { Option } = Select;
 
@@ -15,21 +16,38 @@ type Props = {};
 function DataForm({}: Props) {
   const [form] = Form.useForm();
   const [gender, setGender] = useState("male");
+  const [editUserData, setEditUserData] = useState<UserData | null>(null);
 
   const dispatch = useDispatch();
+  const userToEdit = useSelector((state: RootState) =>
+    state.user.users.find((u) => u.key)
+  );
 
+  useEffect(() => {
+    if (userToEdit) {
+      setEditUserData(userToEdit);
+      form.setFieldsValue(userToEdit);
+    }
+  }, [userToEdit]);
 
   const onFinish = (values: any) => {
-    const newUser = {
-      key: crypto.randomUUID(),
+    const newUser: UserData = {
+      key: editUserData?.key || crypto.randomUUID(),
       firstname: values.firstname,
       lastname: values.lastname,
       gender: values.gender,
       phone: `${values.mobileCode}${values.mobileNumber}`,
       nationality: values.nationality,
     };
-    dispatch(addUser(newUser));
+
+    if (editUserData) {
+      dispatch(editUser(newUser));
+    } else {
+      dispatch(addUser(newUser));
+    }
+
     form.resetFields();
+    setEditUserData(null);
   };
 
   return (
@@ -178,7 +196,7 @@ function DataForm({}: Props) {
             RESET
           </Button>
           <Button type="primary" htmlType="submit">
-            SUBMIT
+            {editUserData ? "UPDATE" : "SUBMIT"}
           </Button>
         </div>
       </div>

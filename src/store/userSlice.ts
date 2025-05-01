@@ -21,8 +21,14 @@ export const userSlice = createSlice({
         (user) => !action.payload.includes(user.key)
       );
     },
+    editUser: (state, action: PayloadAction<UserData>) => {
+      const index = state.users.findIndex((user) => user.key === action.payload.key);
+      if (index !== -1) {
+        state.users[index] = action.payload;
+      }
+    }
   },
 });
 
-export const { addUser, deleteUser, deleteSelected } = userSlice.actions;
+export const { addUser, deleteUser, deleteSelected, editUser } = userSlice.actions;
 export default userSlice.reducer;

@@ -6,7 +6,7 @@ import { Table, Button, Checkbox } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import type { ColumnsType } from "antd/es/table";
 import { RootState } from "@/store/store";
-import { deleteUser, deleteSelected } from "@/store/userSlice";
+import { deleteUser, deleteSelected, editUser } from "@/store/userSlice";
 //Types
 import { UserData } from "@/types/types";
 
@@ -39,7 +39,15 @@ function DataTable({}: Props) {
       title: "MANAGE",
       render: (_, record) => (
         <div className="flex space-x-4">
-          <Button type="link">EDIT</Button>
+          <Button
+            type="link"
+            onClick={() => {
+              const userToEdit = { ...record, editing: true };
+              dispatch(editUser(userToEdit));
+            }}
+          >
+            EDIT
+          </Button>
           <Button
             type="link"
             danger
