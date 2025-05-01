@@ -1,11 +1,14 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 //Components
 import DetailControl from "@/components/card/DetailControl";
 import GeometricShapes from "@/components/card/GeometricShapes";
+import Image from "next/image";
+import { Button } from "antd";
 //Type
 import { ItemCard } from "@/types/types";
-import Image from "next/image";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const itemCard = [
   {
@@ -74,7 +77,12 @@ function Page() {
 
   return (
     <div className="mx-5">
-      <h1 className="py-5 text-4xl">Layout & Style</h1>
+      <div className="py-5 flex items-center space-x-4">
+        <Link href="/" passHref>
+          <Button type="default" shape="circle" icon={<ArrowLeftOutlined />} />
+        </Link>
+        <h1 className="py-5 text-4xl">Layout & Style</h1>
+      </div>
 
       {/* Control */}
       <div className="w-fit mx-auto">
@@ -127,7 +135,7 @@ function Page() {
             {data.slice(0, 3).map((item, index) => (
               <div
                 key={index}
-                className={`w-full h-52 bg-white rounded-md cursor-pointer flex items-center ${
+                className={`w-full h-52 bg-white hover:bg-orange-400 rounded-md cursor-pointer flex items-center ${
                   index === 0 ? "col-start-2" : ""
                 }`}
                 onClick={shuffleData}
@@ -148,7 +156,7 @@ function Page() {
             {data.slice(3).map((item, index) => (
               <div
                 key={index}
-                className={`w-80 h-52 bg-white rounded-md cursor-pointer flex items-center`}
+                className={`w-80 h-52 bg-white hover:bg-orange-400 rounded-md cursor-pointer flex items-center`}
                 onClick={shuffleData}
               >
                 <Image
