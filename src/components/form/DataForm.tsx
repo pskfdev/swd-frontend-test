@@ -1,62 +1,84 @@
 "use client";
-import React, { useEffect, useState } from "react";
-//Components
+import React, { useEffect } from "react";
+import dayjs from "dayjs";
+// Components
 import { Button, DatePicker, Form, Input, Radio, Select } from "antd";
-//Store
+// Store
 import { useDispatch, useSelector } from "react-redux";
-import { addUser, editUser } from "@/store/userSlice";
+import { addUser, clearEditingUser, editUser } from "@/store/userSlice";
 import { RootState } from "@/store/store";
-//Type
+// Type
 import { UserData } from "@/types/types";
 
 const { Option } = Select;
 
-type Props = {};
-
-function DataForm({}: Props) {
+function DataForm() {
   const [form] = Form.useForm();
-  const [gender, setGender] = useState("male");
-  const [editUserData, setEditUserData] = useState<UserData | null>(null);
-
   const dispatch = useDispatch();
+
   const userToEdit = useSelector((state: RootState) =>
-    state.user.users.find((u) => u.key)
+    state.user.users.find((u) => u.editing)
   );
 
+  // ล้างฟอร์มเมื่อเปิดหน้าครั้งแรกหรือไม่มี user ที่ต้องแก้ไข
+  useEffect(() => {
+    if (!userToEdit) {
+      form.resetFields();
+      dispatch(clearEditingUser());
+    }
+  }, []);
+
+  // หากมีข้อมูลแก้ไข ให้แสดงในฟอร์ม
   useEffect(() => {
     if (userToEdit) {
-      setEditUserData(userToEdit);
-      form.setFieldsValue(userToEdit);
-    }
-  }, [userToEdit]);
+      const { citizenId, phone, birthday, ...rest } = userToEdit;
 
+      const [mobileCode, mobileNumber] = phone
+        ? [phone.slice(0, 3), phone.slice(3)]
+        : ["+66", ""];
+
+      const transformed = {
+        ...rest,
+        mobileCode,
+        mobileNumber,
+        citizenId: citizenId || ["", "", "", "", ""],
+        birthday: birthday ? dayjs(birthday) : null,
+      };
+
+      form.setFieldsValue(transformed);
+    }
+  }, [userToEdit, form]);
+
+  // Submit Form
   const onFinish = (values: any) => {
     const newUser: UserData = {
-      key: editUserData?.key || crypto.randomUUID(),
+      key: userToEdit?.key || crypto.randomUUID(),
+      title: values.title,
       firstname: values.firstname,
       lastname: values.lastname,
-      gender: values.gender,
-      phone: `${values.mobileCode}${values.mobileNumber}`,
+      birthday: values.birthday.format("YYYY-MM-DD"), //แปลงเป็น string
       nationality: values.nationality,
+      citizenId: values.citizenId,
+      gender: values.gender,
+      mobileCode: values.mobileCode,
+      mobileNumber: values.mobileNumber,
+      passport: values.passport,
+      salary: values.salary,
+      phone: `${values.mobileCode}${values.mobileNumber}`,
     };
 
-    if (editUserData) {
+    if (userToEdit) {
       dispatch(editUser(newUser));
+      dispatch(clearEditingUser());
     } else {
       dispatch(addUser(newUser));
     }
 
     form.resetFields();
-    setEditUserData(null);
   };
 
   return (
-    <Form
-      form={form}
-      style={{ maxWidth: 900 }}
-      /* layout="vertical" */
-      onFinish={onFinish}
-    >
+    <Form form={form} style={{ maxWidth: 900 }} onFinish={onFinish}>
       {/* Row 1 */}
       <div className="flex items-center justify-between gap-4">
         <Form.Item
@@ -138,7 +160,7 @@ function DataForm({}: Props) {
 
       {/* Row 4 */}
       <Form.Item label="Gender" name="gender" rules={[{ required: true }]}>
-        <Radio.Group onChange={(e) => setGender(e.target.value)} value={gender}>
+        <Radio.Group>
           <Radio value="male">Male</Radio>
           <Radio value="female">Female</Radio>
           <Radio value="unsex">Unsex</Radio>
@@ -192,11 +214,17 @@ function DataForm({}: Props) {
 
         {/* Buttons */}
         <div className="flex justify-center items-start h-full w-full space-x-5">
-          <Button htmlType="reset" onClick={() => form.resetFields()}>
+          <Button
+            htmlType="reset"
+            onClick={() => {
+              form.resetFields();
+              dispatch(clearEditingUser());
+            }}
+          >
             RESET
           </Button>
           <Button type="primary" htmlType="submit">
-            {editUserData ? "UPDATE" : "SUBMIT"}
+            {userToEdit ? "UPDATE" : "SUBMIT"}
           </Button>
         </div>
       </div>

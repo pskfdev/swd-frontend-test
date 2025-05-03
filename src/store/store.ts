@@ -29,7 +29,7 @@ export const store = configureStore({
     user: userReducer,
   },
   preloadedState: {
-    user: loadFromLocalStorage(), // 👈 load initial state
+    user: loadFromLocalStorage(), //load initial state
   },
 });
 

@@ -1,18 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 //Components
-import { Button, DatePicker, Form, Input, Radio, Select } from "antd";
+import { Button } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import DataForm from "@/components/form/DataForm";
 import DataTable from "@/components/form/DataTable";
 
-const { Option } = Select;
-
 function Page() {
-  const [form] = Form.useForm();
-  const [gender, setGender] = useState("male");
-
   return (
     <div className="mx-5">
       <div className="py-5 flex items-center space-x-4">
@@ -27,6 +22,7 @@ function Page() {
         <DataForm />
       </div>
 
+      {/* Table */}
       <div>
         <DataTable />
       </div>

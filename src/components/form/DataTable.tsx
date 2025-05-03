@@ -10,9 +10,7 @@ import { deleteUser, deleteSelected, editUser } from "@/store/userSlice";
 //Types
 import { UserData } from "@/types/types";
 
-type Props = {};
-
-function DataTable({}: Props) {
+function DataTable() {
   const users = useSelector((state: RootState) => state.user.users);
   const dispatch = useDispatch();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
